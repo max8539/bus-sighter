@@ -8,10 +8,8 @@ function argvCheck() {
     const argvError = `${process.argv[1]}: INCORRECT ARGUMENTS
 
 Usage: node run.js [MODE]
-where [MODE] is one of:
+where [MODE] is one of [all, api, site]:
   - all: run the API and serve the website from the same server. If you'd like to run a fully functioning website from only one server, this is likely the option to choose.
-
-Or, if you'd like to run the API (backend) and website (frontend) separetely (you'll need two servers)...
   - api: run only the API server (backend). To make use of the API, you'll need the website being served from elsewhere, or, if you prefer, other clients that can interface with the API correctly are also welcome.
   - site: run only the website server (frontend). The website requires a working API for most functionality. Ensure that the URL of a working API is given in site/settings.json`;
 
@@ -38,7 +36,6 @@ argvCheck();
 const express = require('express');
 const app = express();
 const path = require("path");
-const { argv } = require('process');
 
 app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, '/site/hello-world.html'));
