@@ -46,5 +46,6 @@ const path = require("path");
 app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, '/site/hello-world.html'));
 });
+app.use("/static", express.static(path.join(__dirname, "/site/static")));
 
 app.listen(8888);
