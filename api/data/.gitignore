@@ -1,0 +1,4 @@
+# All database files should NOT be added to repositories.
+*
+!.gitignore
+!data-readme.md
