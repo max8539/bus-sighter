@@ -32,20 +32,25 @@ where [MODE] is one of [all, api, site]:
 
 
 argvCheck();
-if (mode.api) {
-    console.log("Running API server!");
-}
-if (mode.site) {
-    console.log("Running website server!");
-}
 
 const express = require('express');
 const app = express();
 const path = require("path");
 
-app.get('/', function(req, res){
-    res.sendFile(path.join(__dirname, '/site/hello-world.html'));
-});
-app.use("/static", express.static(path.join(__dirname, "/site/static")));
+if (mode.api) {}
+
+if (mode.site) {
+    app.get("/", function(req, res){
+        res.sendFile(path.join(__dirname, "/site/index.html"));
+    });
+    app.get("/settings.json", function (req, res) {
+        res.sendFile(path.join(__dirname, "/site/settings.json"));
+    })
+    app.use("/static", express.static(path.join(__dirname, "/site/static")));
+}
+
+app.use(function (req, res) {
+    res.status(404).send("404 Not Found")
+})
 
 app.listen(8888);
