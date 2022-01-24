@@ -25,13 +25,19 @@ where [MODE] is one of [all, api, site]:
     } else if (process.argv[2] == "site") {
         mode.site = true;
     } else {
-        api = true;
-        site = true;
+        mode.api = true;
+        mode.site = true;
     }
 }
 
 
 argvCheck();
+if (mode.api) {
+    console.log("Running API server!");
+}
+if (mode.site) {
+    console.log("Running website server!");
+}
 
 const express = require('express');
 const app = express();
