@@ -1,3 +1,6 @@
+const path = require("path");
+const fs = require("fs");
+
 let mode = {
     api: false,
     site: false
@@ -11,7 +14,7 @@ Usage: node run.js [MODE]
 where [MODE] is one of [all, api, site]:
   - all: run the API and serve the website from the same server. If you'd like to run a fully functioning website from only one server, this is likely the option to choose.
   - api: run only the API server (backend). To make use of the API, you'll need the website being served from elsewhere, or, if you prefer, other clients that can interface with the API correctly are also welcome.
-  - site: run only the website server (frontend). The website requires a working API for most functionality. Ensure that the URL of a working API is given in site/settings.json`;
+  - site: run only the website server (frontend). The website requires a working API for most functionality. Ensure that the URL of a working API is given in /site/settings.json`;
 
     // Checks that arguments are correct and sets mode. Otherwise, prints error message and exits.
     if (process.argv.length != 3) {
@@ -30,14 +33,16 @@ where [MODE] is one of [all, api, site]:
     }
 }
 
-
 argvCheck();
 
 const express = require('express');
 const app = express();
-const path = require("path");
 
-if (mode.api) {}
+
+if (mode.api) {
+    console.log("Checking data files...");
+    apiFileCheck.checkSettings();
+}
 
 if (mode.site) {
     app.get("/", function(req, res){
@@ -45,6 +50,13 @@ if (mode.site) {
     });
     app.get("/settings.json", function (req, res) {
         res.sendFile(path.join(__dirname, "/site/settings.json"));
+    })
+    app.get("/logo.png", function(req, res) {
+        if (fs.existsSync(path.join(__dirname, "/site/logo.png"))) {
+            res.sendFile(path.join(__dirname, "/site/logo.png"));
+        } else {
+            res.sendFile(path.join(__dirname, "/site/default.png"));
+        }
     })
     app.use("/static", express.static(path.join(__dirname, "/site/static")));
 }
