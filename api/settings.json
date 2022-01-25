@@ -1,14 +1,5 @@
-// sydney-bus-sighter
-// Settings for API (backend)
 {
-    // Number of days after which login tokens should expire
-    // (non-integers will be rounded up)
-    // If login tokens should never expire, enter 0
     "tokenExpiryDays": 2,
-    // Require a description to be given with each sighting
-    // (true/false)
     "requireDescription": true,
-    // When receiving sightings, verify that the bus has been seen on one of the operator's routes.
-    // (true/false)
     "verifyOperatorRoutes": true
 }

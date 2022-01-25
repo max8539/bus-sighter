@@ -1,7 +1,3 @@
-// sydney-bus-sighter
-// Settings for website (frontend)
 {
-    // Domain of API server, including protocol (http/https), without trailing "/"
-    // (if API and website are being run on the same server, API domain should be the same domain as the website.)
     "apiDomain": "http://127.0.0.1:8888"
 }
