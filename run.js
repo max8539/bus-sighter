@@ -40,8 +40,7 @@ const app = express();
 
 
 if (mode.api) {
-    console.log("Checking data files...");
-    apiFileCheck.checkSettings();
+    
 }
 
 if (mode.site) {
