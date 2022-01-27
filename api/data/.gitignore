@@ -2,3 +2,4 @@
 *
 !.gitignore
 !data-readme.md
+!makeDataFiles.json
