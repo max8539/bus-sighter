@@ -1,5 +1,0 @@
-{
-    "tokenExpiryDays": 2,
-    "requireDescription": true,
-    "verifyOperatorRoutes": true
-}
