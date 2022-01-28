@@ -13,13 +13,13 @@ function busesByRoute(route, sightings) {
 function search (query) {
     // Throw 400 if no valid search parameters found (all valid fields undefined).
     let valid = false;
-    query.keys.forEach(function (key) {
+    Object.keys(query).forEach(function (key) {
         if (query[key] != undefined) {
             valid = true;
         }
     });
     // Also throw 400 if plate/fleetnum given with another field.
-    const OTHERFIELDS = ["body", "chassis", "operator", "route"];
+    const OTHERFIELDS = ["body", "chassis", "depot", "operator", "route"];
     if (query.plate_fleetnum != undefined) {
         OTHERFIELDS.forEach(function (key) {
             if (query[key] != undefined) {
@@ -55,7 +55,7 @@ function search (query) {
         });
     } else {
         // Generate an initial list of results from one property, selected in this order (first non-undefined field):
-        // Route (yet to be implemented) -> Operator -> Chassis -> Body
+        // Route (yet to be implemented) -> Depot -> Operator -> Chassis -> Body
         if (query.route != undefined) {
             // Yet to be fully implemented, will always produce an empty list
             let routeBuses = busesByRoute(query.route, SIGHTINGS["sightings"]);
@@ -66,6 +66,12 @@ function search (query) {
                     }
                 });
             })
+        } else if (query.depot != undefined) {
+            BUSES["buses"].forEach(function (bus) {
+                if (bus.depot == query.depot) {
+                    result["results"].push(bus);
+                }
+            });
         } else if (query.operator != undefined) {
             BUSES["buses"].forEach(function (bus) {
                 if (bus.opcode == opcode) {
@@ -89,6 +95,9 @@ function search (query) {
         // Filter results to only include ones matching other search paramters
         for (let i = 0; i < result["results"].length; i++) {
             if (query.operator != undefined && result["results"][i]["opcode"] != opcode) {
+                result["results"].splice(i);
+                i--;
+            } else if (query.depot != undefined && result["results"][i]["depot"] != query.depot) {
                 result["results"].splice(i);
                 i--;
             } else if (query.chassis != undefined && result["results"][i]["chasis"] != query.chasis) {

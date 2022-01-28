@@ -11,10 +11,12 @@ function errorHandler(res, err) {
         res.status(400).send("400 Bad request");
     } else if (err.message == "403") {
         res.status(403).send("403 Forbidden");
-    } else if (err.message = "501") {
+    } else if (err.message == "501") {
+        console.log(501);
         res.status(501).send("501 Not Implemented");
     } else {
-        res.status(500).send(`500 Internal Server Error\n\n${err.message}`);
+        res.status(500).send(`500 Internal Server Error\n\n${err}`);
+        console.error(err);
     }
 }
 
@@ -90,15 +92,16 @@ if (mode.api) {
         try {
             let result;
             const QUERY = {
-                plate: req.query.plate,
-                fleetnum: req.query.fleetnum,
+                plate_fleetnum: req.query.plate_fleetnum,
                 body: req.query.body,
                 chassis: req.query.chassis,
-                operator: req.query.operator,
+                depot: req.query.depot,
+                operator: req.query.operator
             }
             result = API_SERACH.search(QUERY);
             res.json(result);
         } catch (err) {
+            console.log(`Error ${err}`);
             errorHandler(res, err);
         }
     });
