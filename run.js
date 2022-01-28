@@ -7,12 +7,14 @@ let mode = {
 }
 
 function errorHandler(res, err) {
-    if (err.message == 401) {
+    if (err.message == "400") {
         res.status(400).send("400 Bad request");
-    } else if (err.message == 403) {
+    } else if (err.message == "403") {
         res.status(403).send("403 Forbidden");
+    } else if (err.message = "501") {
+        res.status(501).send("501 Not Implemented");
     } else {
-        res.status(500).send("500 Internal Server Error");
+        res.status(500).send(`500 Internal Server Error\n\n${err.message}`);
     }
 }
 
@@ -43,6 +45,7 @@ if (process.argv.length != 3) {
 
 const express = require('express');
 const app = express();
+const API_SERACH = require(path.join(__dirname,"/api/search"));
 
 app.use(express.json())
 
@@ -75,10 +78,26 @@ if (mode.api) {
         } catch (err) {
             errorHandler(res, err);
         }
-    })
-    app.get("/api/search", function (req, res) {
+    });
+    app.get("/api/operatorlist", function (req, res) {
         try {
             res.status(501).send("501 Not Implemented");
+        } catch (err) {
+            errorHandler(res, err);
+        }
+    });
+    app.get("/api/search", function (req, res) {
+        try {
+            let result;
+            const QUERY = {
+                plate: req.query.plate,
+                fleetnum: req.query.fleetnum,
+                body: req.query.body,
+                chassis: req.query.chassis,
+                operator: req.query.operator,
+            }
+            result = API_SERACH.search(QUERY);
+            res.json(result);
         } catch (err) {
             errorHandler(res, err);
         }
