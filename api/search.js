@@ -3,6 +3,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { compileFunction } = require("vm");
 
 // Returns buses whose latest route are the route specified.
 // (yet to be implemented)
@@ -39,7 +40,7 @@ function search (query) {
     let opcode = undefined;
     if (query.operator != undefined) {
         OPERATORS["operators"].forEach(function (operator) {
-            if (operator.name == query.operator) {
+            if (operator.name.toLowerCase() == query.operator.toLowerCase()) {
                 opcode = operator.opcode;
             }
         })
@@ -49,7 +50,8 @@ function search (query) {
     if (query.plate_fleetnum != undefined) {
         // Add buses with matching plate or fleetnum to results.
         BUSES["buses"].forEach(function (bus) {
-            if (bus["plate"] == query.plate_fleetnum || bus["fleetnum"] == query.plate_fleetnum) {
+            if (bus["plate"].toLowerCase() == query.plate_fleetnum.toLowerCase()
+            || bus["fleetnum"].toLowerCase() == query.plate_fleetnum.toLowerCase()) {
                 result["results"].push(bus);
             }
         });
@@ -68,7 +70,7 @@ function search (query) {
             })
         } else if (query.depot != undefined) {
             BUSES["buses"].forEach(function (bus) {
-                if (bus.depot == query.depot) {
+                if (bus.depot.toLowerCase() == query.depot.toLowerCase()) {
                     result["results"].push(bus);
                 }
             });
@@ -80,13 +82,13 @@ function search (query) {
             });
         } else if (query.chassis != undefined) {
             BUSES["buses"].forEach(function (bus) {
-                if (bus.chassis.includes(query.chassis)) {
+                if (bus.chassis.toLowerCase().includes(query.chassis.toLowerCase())) {
                     result["results"].push(bus);
                 }
             })
         } else {
             BUSES["buses"].forEach(function (bus) {
-                if (bus.body.includes(query.body)) {
+                if (bus.body.toLowerCase().includes(query.body.toLowerCase())) {
                     result["results"].push(bus);
                 }
             })
@@ -97,20 +99,31 @@ function search (query) {
             if (query.operator != undefined && result["results"][i]["opcode"] != opcode) {
                 result["results"].splice(i);
                 i--;
-            } else if (query.depot != undefined && result["results"][i]["depot"] != query.depot) {
+            } else if (query.depot != undefined && 
+            result["results"][i]["depot"].toLowerCase() != query.depot.toLowerCase()) {
                 result["results"].splice(i);
                 i--;
-            } else if (query.chassis != undefined && result["results"][i]["chasis"] != query.chasis) {
+            } else if (query.chassis != undefined && 
+            !result["results"][i].chassis.toLowerCase().includes(query.chassis.toLowerCase())) {
                 result["results"].splice(i);
                 i--;
-            } else if (query.body != undefined && result["results"][i]["body"] != query.body) {
+            } else if (query.body != undefined && 
+            !result["results"][i]["body"].toLowerCase().includes(query.body.toLowerCase())) {
                 result["results"].splice(i);
                 i--;
             }
         }
     }
 
-    // Results postprocessing to be implemented later, temporarily directly returning results array
+    // Swap opcodes for operator names in results
+    result["results"].forEach(function (result) {
+        OPERATORS["operators"].forEach(function (operator) {
+            if (result.opcode == operator.opcode) {
+                result.operator = operator.name;
+                delete result.opcode;
+            }
+        })
+    })
     return result;
 }
 
