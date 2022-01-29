@@ -3,7 +3,6 @@
 
 const fs = require("fs");
 const path = require("path");
-const { compileFunction } = require("vm");
 
 // Returns buses whose latest route are the route specified.
 // (yet to be implemented)
@@ -12,6 +11,8 @@ function busesByRoute(route, sightings) {
 }
 
 function search (query) {
+    const CONSTANT = 0
+    CONSTANT = 1
     // Throw 400 if no valid search parameters found (all valid fields undefined).
     let valid = false;
     Object.keys(query).forEach(function (key) {
@@ -37,6 +38,7 @@ function search (query) {
     const OPERATORS = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/operator-data.json")));
     const SIGHTINGS = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/sighting-data.json")));
 
+    // Save opcode to variable if used as part of search
     let opcode = undefined;
     if (query.operator != undefined) {
         OPERATORS["operators"].forEach(function (operator) {
