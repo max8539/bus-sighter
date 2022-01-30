@@ -1,3 +1,6 @@
+// sydney-bus-sighter
+// Main script to run server
+
 const path = require("path");
 const fs = require("fs");
 
@@ -50,28 +53,22 @@ if (process.argv.length != 4) {
 
 const express = require('express');
 const APP = express();
-const API_SERACH = require(path.join(__dirname,"/api/search"));
 
 APP.use(express.json())
 
 // API server routes
 if (mode.api) {
     console.log("Running API server!");
+    const SERACH = require(path.join(__dirname,"/api/search"));
+    const LOGIN = require(path.join(__dirname,"/api/login.js"));
     APP.get("/api/tokencheck", function(req, res) {
         try {
-            res.status(501).send("501 Not Implemented");
+            res.json(LOGIN.tokenCheck(req.query.token));
         } catch (err) {
             errorHandler(res, err);
         }
     });
     APP.post("/api/login", function (req, res) {
-        try {
-            res.status(501).send("501 Not Implemented");
-        } catch (err) {
-            errorHandler(res, err);
-        }
-    });
-    APP.post("/api/logout", function (req, res) {
         try {
             res.status(501).send("501 Not Implemented");
         } catch (err) {
@@ -101,8 +98,7 @@ if (mode.api) {
     });
     APP.get("/api/operatorlist", function (req, res) {
         try {
-            result = API_SERACH.operatorsList();
-            res.json(result)
+            res.json(SERACH.operatorsList());
         } catch (err) {
             errorHandler(res, err);
         }
@@ -117,7 +113,7 @@ if (mode.api) {
                 depot: req.query.depot,
                 operator: req.query.operator
             }
-            result = API_SERACH.search(QUERY);
+            result = SERACH.search(QUERY);
             res.json(result);
         } catch (err) {
             console.log(`Error ${err}`);
@@ -177,6 +173,9 @@ if (mode.site) {
     APP.get("/search", function (req, res) {
         res.status(501).send("501 Not Implemented");
     });
+    APP.get("/bus", function (req, res) {
+        res.status(501).send("501 Not Implemented");
+    })
     APP.get("/user", function (req, res) {
         res.status(501).send("501 Not Implemented");
     });

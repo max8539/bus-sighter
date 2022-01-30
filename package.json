@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/max8539/sydney-bus-sighter#readme",
   "dependencies": {
-    "express": "^4.17.2"
+    "express": "^4.17.2",
+    "jsonwebtoken": "^8.5.1"
   }
 }
