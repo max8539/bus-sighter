@@ -78,6 +78,20 @@ if (mode.api) {
             errorHandler(res, err);
         }
     });
+    APP.post("/api/logoutall", function (req, res) {
+        try {
+            res.status(501).send("501 Not Implemented");
+        } catch (err) {
+            errorHandler(res, err);
+        }
+    })
+    APP.delete("/api/deleteuser", function (req, res) {
+        try {
+            res.status(501).send("501 Not Implemented");
+        } catch (err) {
+            errorHandler(res, err);
+        }
+    });
     APP.post("/api/register", function (req, res) {
         try {
             res.status(501).send("501 Not Implemented");
@@ -87,7 +101,8 @@ if (mode.api) {
     });
     APP.get("/api/operatorlist", function (req, res) {
         try {
-            res.status(501).send("501 Not Implemented");
+            result = API_SERACH.operatorsList();
+            res.json(result)
         } catch (err) {
             errorHandler(res, err);
         }
@@ -137,19 +152,16 @@ if (mode.api) {
             errorHandler(res, err);
         }
     });
-    APP.delete("/api/deleteuser", function (req, res) {
-        try {
-            res.status(501).send("501 Not Implemented");
-        } catch (err) {
-            errorHandler(res, err);
-        }
-    });
 }
 
 // Website server routes
 if (mode.site) {
     console.log("Running website server!");
-    APP.get("/", function (req, res){
+    APP.post("/debug", function (req, res) {
+        console.log(req.body)
+        res.send(req.body.test);
+    })
+    APP.get("/", function (req, res) {
         res.sendFile(path.join(__dirname, "/site/index.html"));
     });
     APP.get("/settings.json", function (req, res) {
@@ -166,9 +178,6 @@ if (mode.site) {
         res.status(501).send("501 Not Implemented");
     });
     APP.get("/user", function (req, res) {
-        res.status(501).send("501 Not Implemented");
-    });
-    APP.get("/history", function (req, res) {
         res.status(501).send("501 Not Implemented");
     });
     APP.get("/deleteuser", function (req, res) {

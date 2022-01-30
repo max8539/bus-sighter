@@ -1,8 +1,17 @@
 // sydney-bus-sighter
-// search.js - Handles API requests to search for buses.
+// search.js - Handles API requests to list operators and search for buses.
 
 const fs = require("fs");
 const path = require("path");
+
+function operatorsList() {
+    const OPERATORS = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/operator-data.json")));
+    let results = {operatorNames:[]};
+    OPERATORS.operators.forEach(function (operator) {
+        results.operatorNames.push(operator.name);
+    })
+    return results;
+}
 
 // Returns buses whose latest route are the route specified.
 // (yet to be implemented)
@@ -129,4 +138,4 @@ function search (query) {
     return result;
 }
 
-module.exports = {search};
+module.exports = {operatorsList,search};
