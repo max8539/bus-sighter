@@ -17,7 +17,7 @@ if (!fs.existsSync(path.join(__dirname,"/api/settings.json"))) {
 }
 if (!fs.existsSync(path.join(__dirname,"/site/settings.json"))) {
     fs.writeFileSync(path.join(__dirname,"/site/settings.json"),`{
-    "apiDomain": "http://insert-domain-here.com
+    "apiDomain": "http://insert-domain-here.com"
 }`)
 }
 
