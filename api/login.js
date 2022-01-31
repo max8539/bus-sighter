@@ -92,7 +92,21 @@ function login (uname, pass) {
 }
 
 function logoutAll (token) {
+    if (token == undefined) {
+        throw Error("400");
+    }
+    tokenInfo = tokenCheck(token);
+    if (!tokenInfo.valid) {
+        throw Error("403");
+    }
 
+    let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
+    USERS.users.forEach(function (user) {
+        if (user.uname == tokenInfo.uname) {
+            user.earliestLogin = time();
+        }
+    });
+    fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
 }
 
 function deleteUser (token) {

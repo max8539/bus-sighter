@@ -12,13 +12,13 @@ let mode = {
 // Convert thrown errors to HTTP statuses
 function errorHandler(res, err) {
     if (err.message == "400") {
-        res.status(400).send("400 Bad request");
+        res.status(400).type("text").send("400 Bad Request");
     } else if (err.message == "403") { 
-        res.status(403).send("403 Forbidden");
+        res.status(403).type("text").send("403 Forbidden");
     } else if (err.message == "501") {
-        res.status(501).send("501 Not Implemented");
+        res.status(501).type("text").send("501 Not Implemented");
     } else {
-        res.status(500).send(`500 Internal Server Error\n\n${err}`);
+        res.status(500).type("text").send(`500 Internal Server Error\n\n${err}`);
         console.error(err);
     }
 }
@@ -74,7 +74,7 @@ if (mode.api) {
             res.json(LOGIN.login(req.body.uname,req.body.pass));
         } catch (err) {
             if (err.message == "invalidLogin") {
-                res.status(400).send("Invalid username or password.")
+                res.status(400).type("text").send("Invalid username or password.")
             } else {
                 errorHandler(res, err);
             }
@@ -82,14 +82,15 @@ if (mode.api) {
     });
     APP.post("/api/logoutall", function (req, res) {
         try {
-            res.status(501).send("501 Not Implemented");
+            LOGIN.logoutAll(req.body.token);
+            res.type("text").send("Success!");
         } catch (err) {
             errorHandler(res, err);
         }
     })
     APP.delete("/api/deleteuser", function (req, res) {
         try {
-            res.status(501).send("501 Not Implemented");
+            res.status(501).type("text").send("501 Not Implemented");
         } catch (err) {
             errorHandler(res, err);
         }
@@ -100,9 +101,9 @@ if (mode.api) {
             res.json(token);
         } catch (err) {
             if (err.message == "invalidEmail") {
-                res.status(400).send("Email is invalid or already in use.");
+                res.status(400).type("text").send("Email is invalid or already in use.");
             } else if (err.message == "invalidUname") {
-                res.status(400).send("Username is invalid or already in use.")
+                res.status(400).type("text").send("Username is invalid or already in use.")
             } else {
                 errorHandler(res, err);
             }
@@ -133,28 +134,28 @@ if (mode.api) {
     });
     APP.get("/api/user", function (req, res) {
         try {
-            res.status(501).send("501 Not Implemented");
+            res.status(501).type("text").send("501 Not Implemented");
         } catch (err) {
             errorHandler(res, err);
         }
     });
     APP.get("/api/userhistory", function (req, res) {
         try {
-            res.status(501).send("501 Not Implemented");
+            res.status(501).type("text").send("501 Not Implemented");
         } catch (err) {
             errorHandler(res, err);
         }
     });
     APP.get("/api/bushistory", function (req, res) {
         try {
-            res.status(501).send("501 Not Implemented");
+            res.status(501).type("text").send("501 Not Implemented");
         } catch (err) {
             errorHandler(res, err);
         }
     });
     APP.post("/api/sighting", function (req, res) {
         try {
-            res.status(501).send("501 Not Implemented");
+            res.status(501).type("text").send("501 Not Implemented");
         } catch (err) {
             errorHandler(res, err);
         }
@@ -182,23 +183,23 @@ if (mode.site) {
         }
     });
     APP.get("/search", function (req, res) {
-        res.status(501).send("501 Not Implemented");
+        res.status(501).type("text").send("501 Not Implemented");
     });
     APP.get("/bus", function (req, res) {
-        res.status(501).send("501 Not Implemented");
+        rres.status(501).type("text").send("501 Not Implemented");
     })
     APP.get("/user", function (req, res) {
-        res.status(501).send("501 Not Implemented");
+        rres.status(501).type("text").send("501 Not Implemented");
     });
     APP.get("/deleteuser", function (req, res) {
-        res.status(501).send("501 Not Implemented");
+        rres.status(501).type("text").send("501 Not Implemented");
     });
     APP.use("/static", express.static(path.join(__dirname, "/site/static")));
 }
 
 // Catches unhandled routes - send HTTP 404
 APP.use(function (req, res) {
-    res.status(404).send("404 Not Found")
+    res.status(404).type("text").send("404 Not Found");
 })
 
 // Run server with port given in command line arguments
