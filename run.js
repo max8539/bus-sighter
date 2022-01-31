@@ -61,6 +61,7 @@ if (mode.api) {
     console.log("Running API server!");
     const SERACH = require(path.join(__dirname,"/api/search"));
     const LOGIN = require(path.join(__dirname,"/api/login.js"));
+    
     APP.get("/api/tokencheck", function(req, res) {
         try {
             res.json(LOGIN.tokenCheck(req.query.token));
@@ -95,7 +96,8 @@ if (mode.api) {
     });
     APP.post("/api/register", function (req, res) {
         try {
-            res.status(501).send("501 Not Implemented");
+            let token = LOGIN.registerUser(req.body.email, req.body.uname, req.body.pass);
+            res.json(token);
         } catch (err) {
             if (err.message == "invalidEmail") {
                 res.status(400).send("Email is invalid or already in use.");
@@ -126,7 +128,6 @@ if (mode.api) {
             result = SERACH.search(QUERY);
             res.json(result);
         } catch (err) {
-            console.log(`Error ${err}`);
             errorHandler(res, err);
         }
     });
