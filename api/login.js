@@ -35,7 +35,7 @@ function tokenCheck (token) {
     const USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
     let tokenData;
     let result = {
-        loggedIn: false,
+        valid: false,
     }
     
     // Attempt to verify and decode token, return logged out result if it fails.
@@ -58,7 +58,7 @@ function tokenCheck (token) {
     // update return object if successful.
     USERS.users.forEach(function (user) {
         if (user.uname == tokenData.uname && user.earliestLogin <= tokenData.createdTime) {
-            result.loggedIn = true;
+            result.valid = true;
             result.uname = tokenData.uname;
         }
     });
@@ -67,6 +67,27 @@ function tokenCheck (token) {
 }
 
 function login (uname, pass) {
+    if (uname == undefined || pass == undefined) {
+        throw Error("400");
+    }
+    
+    const USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
+    let accountUname, token;
+    let valid = false;
+    let hashedPass = hasher(pass);
+
+    USERS.users.forEach(function (user) {
+        if (!valid && (uname == user.uname || uname == user.email) && hashedPass == user.pass) {
+            valid = true;
+            accountUname = user.uname;
+        }
+    })
+
+    if (valid) {
+        return {token:newToken(accountUname)}
+    }
+    throw Error("invalidLogin");
+
 
 }
 

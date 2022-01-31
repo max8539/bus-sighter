@@ -59,7 +59,7 @@ APP.use(express.json())
 // API server routes
 if (mode.api) {
     console.log("Running API server!");
-    const SERACH = require(path.join(__dirname,"/api/search"));
+    const SERACH = require(path.join(__dirname,"/api/search.js"));
     const LOGIN = require(path.join(__dirname,"/api/login.js"));
     
     APP.get("/api/tokencheck", function(req, res) {
@@ -71,7 +71,7 @@ if (mode.api) {
     });
     APP.post("/api/login", function (req, res) {
         try {
-            res.status(501).send("501 Not Implemented");
+            res.json(LOGIN.login(req.body.uname,req.body.pass));
         } catch (err) {
             if (err.message == "invalidLogin") {
                 res.status(400).send("Invalid username or password.")
