@@ -72,7 +72,11 @@ if (mode.api) {
         try {
             res.status(501).send("501 Not Implemented");
         } catch (err) {
-            errorHandler(res, err);
+            if (err.message == "invalidLogin") {
+                res.status(400).send("Invalid username or password.")
+            } else {
+                errorHandler(res, err);
+            }
         }
     });
     APP.post("/api/logoutall", function (req, res) {
@@ -93,7 +97,13 @@ if (mode.api) {
         try {
             res.status(501).send("501 Not Implemented");
         } catch (err) {
-            errorHandler(res, err);
+            if (err.message == "invalidEmail") {
+                res.status(400).send("Email is invalid or already in use.");
+            } else if (err.message == "invalidUname") {
+                res.status(400).send("Username is invalid or already in use.")
+            } else {
+                errorHandler(res, err);
+            }
         }
     });
     APP.get("/api/operatorlist", function (req, res) {
