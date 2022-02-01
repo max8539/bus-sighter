@@ -57,7 +57,8 @@ function tokenCheck (token) {
     // greater than the user's earliest login time, and
     // update return object if successful.
     USERS.users.forEach(function (user) {
-        if (user.uname == tokenData.uname && user.earliestLogin <= tokenData.createdTime) {
+        if (user.uname == tokenData.uname && 
+        user.earliestLogin <= tokenData.createdTime && user.active) {
             result.valid = true;
             result.uname = tokenData.uname;
         }
@@ -77,7 +78,8 @@ function login (uname, pass) {
     let hashedPass = hasher(pass);
 
     USERS.users.forEach(function (user) {
-        if (!valid && (uname == user.uname || uname == user.email) && hashedPass == user.pass) {
+        if (!valid && (uname == user.uname || uname == user.email) 
+        && hashedPass == user.pass && user.active) {
             valid = true;
             accountUname = user.uname;
         }
@@ -150,7 +152,7 @@ function registerUser (email, uname, pass) {
         earliestLogin: time(),
         active: true,
         favouritesList: [],
-        
+
     })
     fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
 
