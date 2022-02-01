@@ -147,7 +147,10 @@ function registerUser (email, uname, pass) {
         email: email,
         uname: uname,
         pass: hashedPass,
-        earliestLogin: time()
+        earliestLogin: time(),
+        active: true,
+        favouritesList: [],
+        
     })
     fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
 

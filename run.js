@@ -160,6 +160,34 @@ if (mode.api) {
             errorHandler(res, err);
         }
     });
+    APP.post("/api/resolveoptions", function (req, res) {
+        try {
+            res.status(501).type("text").send("501 Not Implemented");
+        } catch (err) {
+            errorHandler(res, err);
+        }
+    });
+    APP.get("/api/favourites", function (req, res) {
+        try {
+            res.status(501).type("text").send("501 Not Implemented");
+        } catch (err) {
+            errorHandler(res, err);
+        }
+    });
+    APP.put("/api/favourites", function (req, res) {
+        try {
+            res.status(501).type("text").send("501 Not Implemented");
+        } catch (err) {
+            errorHandler(res, err);
+        }
+    });
+    APP.delete("/api/favourites", function (req, res) {
+        try {
+            res.status(501).type("text").send("501 Not Implemented");
+        } catch (err) {
+            errorHandler(res, err);
+        }
+    })
 }
 
 // Website server routes

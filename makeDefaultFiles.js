@@ -26,7 +26,7 @@ if (!fs.existsSync(path.join(__dirname, "/api/data/user-data.json"))) {
     fs.writeFileSync(path.join(__dirname, "/api/data/user-data.json"), '{"users":[]}');
 }
 if (!fs.existsSync(path.join(__dirname, "/api/data/sighting-data.json"))) {
-    fs.writeFileSync(path.join(__dirname, "/api/data/sighting-data.json"), '{"sightings":[]}');
+    fs.writeFileSync(path.join(__dirname, "/api/data/sighting-data.json"), '{"sightings":[],"options":[]}');
 }
 
 // Data files - These should be modified by the website maintainers to contain the appropriate data.
