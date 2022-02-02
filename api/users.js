@@ -4,6 +4,7 @@
 const fs = require("fs");
 const path = require("path");
 const jwt = require("jsonwebtoken");
+const { hasher } = require("./login");
 const SETTINGS = JSON.parse(fs.readFileSync(path.join(__dirname,"/settings.json")));
 const USERDATA_PATH = path.join(__dirname,"/data/user-data.json");
 const LOGIN = require(path.join(__dirname,"login.js"));
@@ -63,10 +64,38 @@ function changeUserInfo (token, email, uname, pass) {
 }
 
 function changeUserPass (token, pass, passOne, passTwo) {
+    if (token == undefined || pass == undefined ||
+    passOne == undefined || passTwo == undefined) {
+        throw Error("400");
+    }
     tokenInfo = LOGIN.tokenCheck(token);
     if (!tokenInfo.valid) {
         throw Error("403");
     }
+
+    if (passOne != passTwo) {
+        throw Error("E03");
+    }
+    if (passOne.length < 6) {
+        throw Error("E04");
+    }
+
+    hashedPass = LOGIN.hasher(pass);
+    let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
+    USERS.users.forEach(function (user) {
+        if (user.uname == tokenInfo.uname) {
+            if (hashedPass == user.pass) {
+                user.pass = LOGIN.hasher(passOne);
+                user.earliestLogin = LOGIN.time();
+            } else {
+                throw Error("E00");
+            }
+        }
+    });
+
+    fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
+    return {newToken:LOGIN.newToken(tokenInfo.uname)}
+
 }
 
 function getFavourite (token) {

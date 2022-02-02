@@ -109,12 +109,19 @@ if (mode.api) {
     });
     APP.put("/api/changeuserinfo", function (req, res) {
         try {
-            let newtoken = USERS.changeUserInfo(req.body.token,req.body.email,req.body.uname,req.body.pass);
-            res.json(newtoken);
+            let newToken = USERS.changeUserInfo(req.body.token,req.body.email,req.body.uname,req.body.pass);
+            res.json(newToken);
         } catch (err) {
             errorHandler(res, err);
         }
-
+    });
+    APP.put("/api/changeuserpass", function (req, res) {
+        try {
+            let newToken = USERS.changeUserPass(req.body.token,req.body.pass,req.body.passOne,req.body.passTwo);
+            res.json(newToken);
+        } catch (err) {
+            errorHandler(res, err);
+        }
     })
     APP.delete("/api/deleteuser", function (req, res) {
         try {
