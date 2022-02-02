@@ -17,6 +17,14 @@ function errorHandler(res, err) {
         res.status(403).type("text").send("403 Forbidden");
     } else if (err.message == "501") {
         res.status(501).type("text").send("501 Not Implemented");
+    } else if (err.message == "E01") {
+        res.status(400).type("text").send("E01 Email is invalid or already in use");
+    } else if (err.message == "E02") {
+        res.status(400).type("text").send("E02 Username is invalid or already in use");
+    } else if (err,message == "E03") {
+        res.status(400).type("text").send("E03 Passwords do not match");
+    } else if (err.message == "E04") {
+        res.status(400).type("text").send("E04 Password is too weak");
     } else {
         res.status(500).type("text").send(`500 Internal Server Error\n\n${err}`);
         console.error(err);
@@ -97,16 +105,10 @@ if (mode.api) {
     });
     APP.post("/api/register", function (req, res) {
         try {
-            let token = LOGIN.registerUser(req.body.email, req.body.uname, req.body.pass);
+            let token = LOGIN.registerUser(req.body.email, req.body.uname, req.body.passOne, req.body.passTwo);
             res.json(token);
         } catch (err) {
-            if (err.message == "invalidEmail") {
-                res.status(400).type("text").send("Email is invalid or already in use.");
-            } else if (err.message == "invalidUname") {
-                res.status(400).type("text").send("Username is invalid or already in use.")
-            } else {
-                errorHandler(res, err);
-            }
+            errorHandler(res, err);
         }
     });
     APP.get("/api/operatorlist", function (req, res) {

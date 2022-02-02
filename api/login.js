@@ -1,5 +1,5 @@
 // sydney-bus-sighter
-// Scripts that handle login, logout, and other user account management
+// Scripts that handles login tokens and other user credentials management
 
 const fs = require("fs");
 const path = require("path");
@@ -111,12 +111,9 @@ function logoutAll (token) {
     fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
 }
 
-function deleteUser (token) {
-
-}
-
-function registerUser (email, uname, pass) {
-    if (email == undefined || uname == undefined || pass == undefined) {
+function registerUser (email, uname, passOne, passTwo) {
+    if (email == undefined || uname == undefined || 
+    passOne == undefined || passTwo == undefined) {
         throw new Error("400");
     }
 
@@ -131,18 +128,21 @@ function registerUser (email, uname, pass) {
     // Check if email or username has already been used
     USERS.users.forEach(function (user) {
         if (user.email == email) {
-            throw new Error("invalidEmail");
+            throw new Error("E01");
         } else if (user.uname == uname) {
-            throw new Error("invalidUname");
+            throw new Error("E02");
         }
     });
 
-    if (pass.length < 6) {
-        throw new Error("badPassword")
+    if (passOne != passTwo) {
+        throw new Error("E03");
+    }
+    if (passOne.length < 6) {
+        throw new Error("E04");
     }
 
     // Hash password
-    let hashedPass = hasher(pass);
+    let hashedPass = hasher(passOne);
     
     // Create user entry and write to file
     USERS.users.push({
@@ -161,4 +161,4 @@ function registerUser (email, uname, pass) {
 
 }
 
-module.exports = {tokenCheck,login,logoutAll,deleteUser,registerUser}
+module.exports = {tokenCheck,login,logoutAll,registerUser}
