@@ -88,7 +88,7 @@ function login (uname, pass) {
     if (valid) {
         return {token:newToken(accountUname)}
     }
-    throw Error("invalidLogin");
+    throw Error("E00");
 
 
 }
@@ -114,13 +114,13 @@ function logoutAll (token) {
 function registerUser (email, uname, passOne, passTwo) {
     if (email == undefined || uname == undefined || 
     passOne == undefined || passTwo == undefined) {
-        throw new Error("400");
+        throw Error("400");
     }
 
     // Verify email against regex
     const emailRegex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
     if (!emailRegex.test(email)) {
-        throw new Error("invalidEmail");
+        throw Error("E01");
     }
     
     let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
@@ -128,9 +128,9 @@ function registerUser (email, uname, passOne, passTwo) {
     // Check if email or username has already been used
     USERS.users.forEach(function (user) {
         if (user.email == email) {
-            throw new Error("E01");
+            throw Error("E01");
         } else if (user.uname == uname) {
-            throw new Error("E02");
+            throw Error("E02");
         }
     });
 
@@ -161,4 +161,4 @@ function registerUser (email, uname, passOne, passTwo) {
 
 }
 
-module.exports = {tokenCheck,login,logoutAll,registerUser}
+module.exports = {tokenCheck,hasher,login,logoutAll,newToken,registerUser,time}
