@@ -25,11 +25,6 @@ function changeUserInfo (token, email, uname, pass) {
         }
     });
 
-    hashedPass = LOGIN.hasher(pass);
-    if (hashedPass != oldUserInfo.pass) {
-        throw Error("E00");
-    }
-
     if (email != oldUserInfo.email) {
         const emailRegex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
         if (!emailRegex.test(email)) {
@@ -48,6 +43,11 @@ function changeUserInfo (token, email, uname, pass) {
                 throw Error("E02");
             }
         });
+    }
+
+    hashedPass = LOGIN.hasher(pass);
+    if (hashedPass != oldUserInfo.pass) {
+        throw Error("E00");
     }
 
     USERS.users.forEach(function (user) {
