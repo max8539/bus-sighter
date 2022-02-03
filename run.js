@@ -71,7 +71,6 @@ if (mode.api) {
     console.log("Running API server!");
     const SERACH = require(path.join(__dirname,"/api/search.js"));
     const LOGIN = require(path.join(__dirname,"/api/login.js"));
-    const USERS = require(path.join(__dirname,"/api/users.js"));
     
     APP.get("/api/tokencheck", function(req, res) {
         try {
@@ -109,7 +108,7 @@ if (mode.api) {
     });
     APP.put("/api/changeuserinfo", function (req, res) {
         try {
-            let newToken = USERS.changeUserInfo(req.body.token,req.body.email,req.body.uname,req.body.pass);
+            let newToken = LOGIN.changeUserInfo(req.body.token,req.body.email,req.body.uname,req.body.pass);
             res.json(newToken);
         } catch (err) {
             errorHandler(res, err);
@@ -117,7 +116,7 @@ if (mode.api) {
     });
     APP.put("/api/changeuserpass", function (req, res) {
         try {
-            let newToken = USERS.changeUserPass(req.body.token,req.body.pass,req.body.passOne,req.body.passTwo);
+            let newToken = LOGIN.changeUserPass(req.body.token,req.body.pass,req.body.passOne,req.body.passTwo);
             res.json(newToken);
         } catch (err) {
             errorHandler(res, err);

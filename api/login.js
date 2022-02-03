@@ -161,4 +161,100 @@ function registerUser (email, uname, passOne, passTwo) {
 
 }
 
-module.exports = {tokenCheck,hasher,login,logoutAll,newToken,registerUser,time}
+function changeUserInfo (token, email, uname, pass) {
+    if (token == undefined || email == undefined ||
+    uname == undefined || pass == undefined) {
+        throw Error("400");
+    }
+    tokenInfo = tokenCheck(token);
+    if (!tokenInfo.valid) {
+        throw Error("403");
+    }
+    let oldUserInfo;
+    let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
+    USERS.users.forEach(function (user) {
+        if (user.uname == tokenInfo.uname) {
+            oldUserInfo = user;
+        }
+    });
+
+    if (email != oldUserInfo.email) {
+        const emailRegex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+        if (!emailRegex.test(email)) {
+            throw Error("E01");
+        }
+        USERS.users.forEach(function (user) {
+            if (user.email == email) {
+                throw Error("E01");
+            }
+        });
+    }
+
+    if (uname != oldUserInfo.uname) {
+        USERS.users.forEach(function (user) {
+            if (user.uname == uname) {
+                throw Error("E02");
+            }
+        });
+    }
+
+    hashedPass = hasher(pass);
+    if (hashedPass != oldUserInfo.pass) {
+        throw Error("E00");
+    }
+
+    USERS.users.forEach(function (user) {
+        if (user.uname == tokenInfo.uname) {
+            user.email = email;
+            user.uname = uname;
+            user.earliestLogin = time();
+        }
+    });
+
+    fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
+    return {newToken: newToken(uname)};
+}
+
+function changeUserPass (token, pass, passOne, passTwo) {
+    if (token == undefined || pass == undefined ||
+    passOne == undefined || passTwo == undefined) {
+        throw Error("400");
+    }
+    tokenInfo = tokenCheck(token);
+    if (!tokenInfo.valid) {
+        throw Error("403");
+    }
+
+    if (passOne != passTwo) {
+        throw Error("E03");
+    }
+    if (passOne.length < 6) {
+        throw Error("E04");
+    }
+
+    hashedPass = hasher(pass);
+    let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
+    USERS.users.forEach(function (user) {
+        if (user.uname == tokenInfo.uname) {
+            if (hashedPass == user.pass) {
+                user.pass = hasher(passOne);
+                user.earliestLogin = time();
+            } else {
+                throw Error("E00");
+            }
+        }
+    });
+
+    fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
+    return {newToken:newToken(tokenInfo.uname)}
+
+}
+
+function deleteUser (token, pass) {
+    tokenInfo = tokenCheck(token);
+    if (!tokenInfo.valid) {
+        throw Error("403");
+    }
+}
+
+module.exports = {tokenCheck,hasher,login,logoutAll,newToken,registerUser,changeUserInfo,changeUserPass,deleteUser}
