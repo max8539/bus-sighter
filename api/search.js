@@ -120,19 +120,19 @@ function search (query) {
         // Filter results to only include ones matching other search paramters
         for (let i = 0; i < result["results"].length; i++) {
             if (query.operator != undefined && result["results"][i]["opcode"] != opcode) {
-                result["results"].splice(i);
+                result["results"].splice(i,1);
                 i--;
             } else if (query.depot != undefined && 
             result["results"][i]["depot"].toLowerCase() != query.depot.toLowerCase()) {
-                result["results"].splice(i);
+                result["results"].splice(i,1);
                 i--;
             } else if (query.chassis != undefined && 
             !result["results"][i].chassis.toLowerCase().includes(query.chassis.toLowerCase())) {
-                result["results"].splice(i);
+                result["results"].splice(i,1);
                 i--;
             } else if (query.body != undefined && 
             !result["results"][i]["body"].toLowerCase().includes(query.body.toLowerCase())) {
-                result["results"].splice(i);
+                result["results"].splice(i,1);
                 i--;
             }
         }
@@ -143,4 +143,4 @@ function search (query) {
     return result;
 }
 
-module.exports = {operatorsList,search};
+module.exports = {operatorsList,search,infoToDisplay};

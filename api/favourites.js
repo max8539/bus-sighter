@@ -33,7 +33,7 @@ function getFavourite (token) {
     // Collect bus data for each favourite in list
     favouritesList.forEach(function (plate) {
         BUSES.buses.forEach(function (bus) {
-            if (bus.plate = plate) {
+            if (bus.plate == plate) {
                 favourites.push(bus);
             }
         });
@@ -91,7 +91,7 @@ function deleteFavourite (token, favourite) {
         throw Error("403");
     }
 
-    let USERS = fs.readFileSync(USERDATA_PATH);
+    let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
     USERS.users.forEach(function (user) {
         if (user.uname == tokenInfo.uname) {
             // Check if favourite exists in user's list
@@ -101,7 +101,7 @@ function deleteFavourite (token, favourite) {
             
             // Locate and remove favourite from list
             let removeIndex = user.favourites.indexOf(favourite);
-            user.favourites.splice(removeIndex);
+            user.favourites.splice(removeIndex,1);
         }
 
         // Write data and return
