@@ -8,10 +8,12 @@ const SETTINGS = JSON.parse(fs.readFileSync(path.join(__dirname,"/settings.json"
 const jwt = require("jsonwebtoken");
 const USERDATA_PATH = path.join(__dirname,"/data/user-data.json");
 
+// Returns UTC timestamps without milliseconds
 function time () {
     return Math.floor(Date.now() / 1000);
 }
 
+// Create and sigh login token with givne uname and current time as timestamp
 function newToken (uname) {
     return jwt.sign({
         uname: uname,
@@ -19,6 +21,7 @@ function newToken (uname) {
     },SETTINGS.tokenSecretKey,{noTimestamp:true})
 }
 
+// Password hashing function: runs SHA256 twice and outputs base64 string
 function hasher (pass) {
     let hashOne = crypto.createHash("sha256");
     let hashTwo = crypto.createHash("sha256");
@@ -27,6 +30,7 @@ function hasher (pass) {
     return hashTwo.digest("base64");
 }
 
+// Function to verify login tokens
 function tokenCheck (token) {
     if (token == undefined) {
         throw Error("400");
@@ -67,6 +71,7 @@ function tokenCheck (token) {
     return result;
 }
 
+// Given a correct username and password, generate a new login token for the user.
 function login (uname, pass) {
     if (uname == undefined || pass == undefined) {
         throw Error("400");
@@ -77,6 +82,7 @@ function login (uname, pass) {
     let valid = false;
     let hashedPass = hasher(pass);
 
+    // Check all users for a matching email/uname and matching password
     USERS.users.forEach(function (user) {
         if (!valid && (uname == user.uname || uname == user.email) 
         && hashedPass == user.pass && user.active) {
@@ -85,15 +91,18 @@ function login (uname, pass) {
         }
     })
 
+    // Return login token or throw error if login was unsuccessful.
     if (valid) {
         return {token:newToken(accountUname)}
+    } else {
+        throw Error("E00");
     }
-    throw Error("E00");
-
-
+    
 }
 
+// Invalidate all existing login tokens for a user
 function logoutAll (token) {
+    // Verify login token
     if (token == undefined) {
         throw Error("400");
     }
@@ -102,13 +111,17 @@ function logoutAll (token) {
         throw Error("403");
     }
 
+    // Advance user's earliest login time to current time
     let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
     USERS.users.forEach(function (user) {
         if (user.uname == tokenInfo.uname) {
             user.earliestLogin = time();
         }
     });
+    
+    // Write data and return
     fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
+    return;
 }
 
 function registerUser (email, uname, passOne, passTwo) {
@@ -134,6 +147,7 @@ function registerUser (email, uname, passOne, passTwo) {
         }
     });
 
+    // Verify passowrds match, and password is not weak
     if (passOne != passTwo) {
         throw new Error("E03");
     }
@@ -151,7 +165,7 @@ function registerUser (email, uname, passOne, passTwo) {
         pass: hashedPass,
         earliestLogin: time(),
         active: true,
-        favouritesList: [],
+        favourites: [],
 
     })
     fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
@@ -162,6 +176,7 @@ function registerUser (email, uname, passOne, passTwo) {
 }
 
 function changeUserInfo (token, email, uname, pass) {
+    // Validate request and token
     if (token == undefined || email == undefined ||
     uname == undefined || pass == undefined) {
         throw Error("400");
@@ -170,6 +185,8 @@ function changeUserInfo (token, email, uname, pass) {
     if (!tokenInfo.valid) {
         throw Error("403");
     }
+    
+    // Temporarily store existing data
     let oldUserInfo;
     let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
     USERS.users.forEach(function (user) {
@@ -178,6 +195,7 @@ function changeUserInfo (token, email, uname, pass) {
         }
     });
 
+    // Validate email if a new one is provided
     if (email != oldUserInfo.email) {
         const emailRegex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
         if (!emailRegex.test(email)) {
@@ -190,6 +208,7 @@ function changeUserInfo (token, email, uname, pass) {
         });
     }
 
+    // Validate username if a new one is given
     if (uname != oldUserInfo.uname) {
         USERS.users.forEach(function (user) {
             if (user.uname == uname) {
@@ -198,11 +217,13 @@ function changeUserInfo (token, email, uname, pass) {
         });
     }
 
+    // Ensore password given is correct, this check should be done last
     hashedPass = hasher(pass);
     if (hashedPass != oldUserInfo.pass) {
         throw Error("E00");
     }
 
+    // Write data, invalidate existing login tokens
     USERS.users.forEach(function (user) {
         if (user.uname == tokenInfo.uname) {
             user.email = email;
@@ -211,11 +232,13 @@ function changeUserInfo (token, email, uname, pass) {
         }
     });
 
+    // Write data and return new login token
     fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
     return {newToken: newToken(uname)};
 }
 
 function changeUserPass (token, pass, passOne, passTwo) {
+    // Validate request and token
     if (token == undefined || pass == undefined ||
     passOne == undefined || passTwo == undefined) {
         throw Error("400");
@@ -225,6 +248,7 @@ function changeUserPass (token, pass, passOne, passTwo) {
         throw Error("403");
     }
 
+    // Check that new passwords match, and new password is not weak
     if (passOne != passTwo) {
         throw Error("E03");
     }
@@ -232,6 +256,8 @@ function changeUserPass (token, pass, passOne, passTwo) {
         throw Error("E04");
     }
 
+    // Ensure existing password given is correct, this check should be done last.
+    // If password is correct, write new password and invalid existing login tokens.
     hashedPass = hasher(pass);
     let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
     USERS.users.forEach(function (user) {
@@ -245,6 +271,7 @@ function changeUserPass (token, pass, passOne, passTwo) {
         }
     });
 
+    // Write changes and generate new login token
     fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
     return {newToken:newToken(tokenInfo.uname)}
 

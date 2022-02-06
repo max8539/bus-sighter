@@ -71,6 +71,7 @@ if (mode.api) {
     console.log("Running API server!");
     const SERACH = require(path.join(__dirname,"/api/search.js"));
     const LOGIN = require(path.join(__dirname,"/api/login.js"));
+    const FAVOURITES = require(path.join(__dirname,"/api/favourites.js"));
     
     APP.get("/api/tokencheck", function(req, res) {
         try {
@@ -93,7 +94,7 @@ if (mode.api) {
     APP.post("/api/logoutall", function (req, res) {
         try {
             LOGIN.logoutAll(req.body.token);
-            res.type("text").send("Success!");
+            res.type("text").send("Success");
         } catch (err) {
             errorHandler(res, err);
         }
@@ -189,25 +190,27 @@ if (mode.api) {
     });
     APP.get("/api/favourites", function (req, res) {
         try {
-            res.status(501).type("text").send("501 Not Implemented");
+            res.json(FAVOURITES.getFavourite(req.query.token));
         } catch (err) {
             errorHandler(res, err);
         }
     });
     APP.put("/api/favourites", function (req, res) {
         try {
-            res.status(501).type("text").send("501 Not Implemented");
+            FAVOURITES.putFavourite(req.body.token,req.body.favourite);
+            res.type("text").send("Success");
         } catch (err) {
             errorHandler(res, err);
         }
     });
     APP.delete("/api/favourites", function (req, res) {
         try {
-            res.status(501).type("text").send("501 Not Implemented");
+            FAVOURITES.deleteFavourite(req.body.token,req.body.favourite);
+            res.type("text").send("Success");
         } catch (err) {
             errorHandler(res, err);
         }
-    })
+    });
 }
 
 // Website server routes

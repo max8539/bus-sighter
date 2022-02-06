@@ -19,9 +19,21 @@ function busesByRoute(route, sightings) {
     return []
 }
 
+function infoToDisplay(buses) {
+    const OPERATORS = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/operator-data.json")));
+    const SIGHTINGS = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/sighting-data.json")));
+    buses.forEach(function (bus) {
+        OPERATORS["operators"].forEach(function (operator) {
+            if (bus.opcode == operator.opcode) {
+                bus.operator = operator.name;
+                delete bus.opcode;
+            }
+        });
+    });
+    return buses;
+}
+
 function search (query) {
-    const CONSTANT = 0
-    CONSTANT = 1
     // Throw 400 if no valid search parameters found (all valid fields undefined).
     let valid = false;
     Object.keys(query).forEach(function (key) {
@@ -127,14 +139,7 @@ function search (query) {
     }
 
     // Swap opcodes for operator names in results
-    result["results"].forEach(function (result) {
-        OPERATORS["operators"].forEach(function (operator) {
-            if (result.opcode == operator.opcode) {
-                result.operator = operator.name;
-                delete result.opcode;
-            }
-        })
-    })
+    result.results = infoToDisplay(result.results);
     return result;
 }
 
