@@ -1,4 +1,7 @@
-// sydney-bus-sighter
+// bus-sighter
+// a project by a bus spotter based in Sydney, Australia
+// https://github.com/max8539/bus-sighter
+
 // A script to generate JSON files with basic structure that are required by the software.
 // Files that already exist will not be changed.
 

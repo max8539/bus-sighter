@@ -1,5 +1,5 @@
 {
-  "name": "sydney-bus-sighter",
+  "name": "bus-sighter",
   "version": "0.0.1",
   "description": "a site for tracking buses?",
   "main": "run.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/max8539/sydney-bus-sighter.git"
+    "url": "git+https://github.com/max8539/bus-sighter.git"
   },
   "author": "max8539",
   "license": "All rights reserved.",
   "bugs": {
-    "url": "https://github.com/max8539/sydney-bus-sighter/issues"
+    "url": "https://github.com/max8539/bus-sighter/issues"
   },
-  "homepage": "https://github.com/max8539/sydney-bus-sighter#readme",
+  "homepage": "https://github.com/max8539/bus-sighter",
   "dependencies": {
     "express": "^4.17.2",
     "jsonwebtoken": "^8.5.1"

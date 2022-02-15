@@ -1,4 +1,4 @@
-# sydney-bus-sighter
+# bus-sighter
 A website where the community can contribute information and track buses. More info coming soon, once I start coding more of the website.
 
 # IMPORTANT

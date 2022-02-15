@@ -1,4 +1,7 @@
-// sydney-bus-sighter
+// bus-sighter
+// a project by a bus spotter based in Sydney, Australia
+// https://github.com/max8539/bus-sighter
+
 // Main script to run server
 
 const path = require("path");

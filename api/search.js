@@ -1,4 +1,7 @@
-// sydney-bus-sighter
+// bus-sighter
+// a project by a bus spotter based in Sydney, Australia
+// https://github.com/max8539/bus-sighter
+
 // search.js - Handles API requests to list operators and search for buses.
 
 const fs = require("fs");
