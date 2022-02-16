@@ -21,7 +21,7 @@ function newToken (uname) {
     return jwt.sign({
         uname: uname,
         createdTime: time()
-    },SETTINGS.tokenSecretKey,{noTimestamp:true})
+    },SETTINGS.tokenSecretKey,{algorithm:"HS256",noTimestamp:true})
 }
 
 // Password hashing function: runs SHA256 twice and outputs base64 string
@@ -47,7 +47,7 @@ function tokenCheck (token) {
     
     // Attempt to verify and decode token, return logged out result if it fails.
     try {
-        tokenData = jwt.verify(token, SETTINGS.tokenSecretKey);
+        tokenData = jwt.verify(token, SETTINGS.tokenSecretKey,{algorithms:["HS256"]});
     } catch (err) {
         return result;
     }

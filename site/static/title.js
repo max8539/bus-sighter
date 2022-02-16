@@ -1,1 +1,0 @@
-document.getElementById("websiteTitle").innerHTML = "Website title!"
