@@ -6,6 +6,7 @@
 
 const path = require("path");
 const fs = require("fs");
+const CORS = require("cors");
 
 let mode = {
     api: false,
@@ -67,7 +68,9 @@ if (process.argv.length != 4) {
 const express = require('express');
 const APP = express();
 
-APP.use(express.json())
+CORS(APP);
+APP.use(express.json());
+
 
 // API server routes
 if (mode.api) {
