@@ -75,9 +75,9 @@ APP.use(express.json());
 // API server routes
 if (mode.api) {
     console.log("Running API server!");
-    const SERACH = require(path.join(__dirname,"/api/search.js"));
-    const LOGIN = require(path.join(__dirname,"/api/login.js"));
-    const FAVOURITES = require(path.join(__dirname,"/api/favourites.js"));
+    const SERACH = require("./api/search.js");
+    const LOGIN = require("./api/login.js");
+    const FAVOURITES = require("./api/favourites.js");
     
     APP.get("/api/tokencheck", function(req, res) {
         try {

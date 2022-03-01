@@ -21,7 +21,7 @@ function newToken (uname) {
     return jwt.sign({
         uname: uname,
         createdTime: time()
-    },SETTINGS.tokenSecretKey,{algorithm:"HS256",noTimestamp:true})
+    },SETTINGS.tokenSecretKey,{algorithm:"HS256",noTimestamp:true});
 }
 
 // Password hashing function: runs SHA256 twice and outputs base64 string
@@ -247,17 +247,11 @@ function changeUserPass (token, pass, passOne, passTwo) {
         throw Error("400");
     }
     tokenInfo = tokenCheck(token);
-    if (!tokenInfo.valid) {
-        throw Error("403");
-    }
+    if (!tokenInfo.valid) {throw Error("403")}
 
     // Check that new passwords match, and new password is not weak
-    if (passOne != passTwo) {
-        throw Error("E03");
-    }
-    if (passOne.length < 6) {
-        throw Error("E04");
-    }
+    if (passOne != passTwo) {throw Error("E03")}
+    if (passOne.length < 6) {throw Error("E04")}
 
     // Ensure existing password given is correct, this check should be done last.
     // If password is correct, write new password and invalid existing login tokens.
@@ -282,9 +276,7 @@ function changeUserPass (token, pass, passOne, passTwo) {
 
 function deleteUser (token, pass) {
     tokenInfo = tokenCheck(token);
-    if (!tokenInfo.valid) {
-        throw Error("403");
-    }
+    if (!tokenInfo.valid) {throw Error("403")}
 }
 
 module.exports = {tokenCheck,hasher,login,logoutAll,newToken,registerUser,changeUserInfo,changeUserPass,deleteUser}

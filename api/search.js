@@ -6,9 +6,10 @@
 
 const fs = require("fs");
 const path = require("path");
+const BUSES = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/bus-data.json")));
+const OPERATORS = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/operator-data.json")));
 
 function operatorsList() {
-    const OPERATORS = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/operator-data.json")));
     let results = {operatorNames:[]};
     OPERATORS.operators.forEach(function (operator) {
         results.operatorNames.push(operator.name);
@@ -23,7 +24,6 @@ function busesByRoute(route, sightings) {
 }
 
 function infoToDisplay(buses) {
-    const OPERATORS = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/operator-data.json")));
     const SIGHTINGS = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/sighting-data.json")));
     buses.forEach(function (bus) {
         OPERATORS["operators"].forEach(function (operator) {
@@ -40,26 +40,18 @@ function search (query) {
     // Throw 400 if no valid search parameters found (all valid fields undefined).
     let valid = false;
     Object.keys(query).forEach(function (key) {
-        if (query[key] != undefined) {
-            valid = true;
-        }
+        if (query[key] != undefined) {valid = true}
     });
     // Also throw 400 if plate/fleetnum given with another field.
     const OTHERFIELDS = ["body", "chassis", "depot", "operator", "route"];
     if (query.plate_fleetnum != undefined) {
         OTHERFIELDS.forEach(function (key) {
-            if (query[key] != undefined) {
-                valid = false;
-            } 
+            if (query[key] != undefined) {valid = false} 
         })
     }
 
-    if (!valid) {
-        throw Error("400");
-    }
+    if (!valid) {throw Error("400")}
 
-    const BUSES = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/bus-data.json")));
-    const OPERATORS = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/operator-data.json")));
     const SIGHTINGS = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/sighting-data.json")));
 
     // Save opcode to variable if used as part of search
