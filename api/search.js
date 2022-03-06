@@ -40,13 +40,13 @@ function search (query) {
     // Throw 400 if no valid search parameters found (all valid fields undefined).
     let valid = false;
     Object.keys(query).forEach(function (key) {
-        if (query[key] != undefined) {valid = true}
+        if (query[key] != undefined && query[key] != "") {valid = true}
     });
     // Also throw 400 if plate/fleetnum given with another field.
     const OTHERFIELDS = ["body", "chassis", "depot", "operator", "route"];
     if (query.plate_fleetnum != undefined) {
         OTHERFIELDS.forEach(function (key) {
-            if (query[key] != undefined) {valid = false} 
+            if (query[key] != undefined && query[key] != "") {valid = false} 
         })
     }
 
@@ -65,7 +65,7 @@ function search (query) {
     }
 
     let result = {"results":[]};
-    if (query.plate_fleetnum != undefined) {
+    if (query.plate_fleetnum != undefined && query.plate_fleetnum != "") {
         // Add buses with matching plate or fleetnum to results.
         BUSES["buses"].forEach(function (bus) {
             if (bus["plate"].toLowerCase() == query.plate_fleetnum.toLowerCase()
@@ -76,7 +76,7 @@ function search (query) {
     } else {
         // Generate an initial list of results from one property, selected in this order (first non-undefined field):
         // Route (yet to be implemented) -> Depot -> Operator -> Chassis -> Body
-        if (query.route != undefined) {
+        if (query.route != undefined && query.route != "") {
             // Yet to be fully implemented, will always produce an empty list
             let routeBuses = busesByRoute(query.route, SIGHTINGS["sightings"]);
             routeBuses.forEach(function (routeBus) {
@@ -86,19 +86,19 @@ function search (query) {
                     }
                 });
             })
-        } else if (query.depot != undefined) {
+        } else if (query.depot != undefined && query.depot != "") {
             BUSES["buses"].forEach(function (bus) {
                 if (bus.depot.toLowerCase() == query.depot.toLowerCase()) {
                     result["results"].push(bus);
                 }
             });
-        } else if (query.operator != undefined) {
+        } else if (query.operator != undefined && query.operator != "") {
             BUSES["buses"].forEach(function (bus) {
                 if (bus.opcode == opcode) {
                     result["results"].push(bus);
                 }
             });
-        } else if (query.chassis != undefined) {
+        } else if (query.chassis != undefined && query.chassis != "") {
             BUSES["buses"].forEach(function (bus) {
                 if (bus.chassis.toLowerCase().includes(query.chassis.toLowerCase())) {
                     result["results"].push(bus);
@@ -114,18 +114,19 @@ function search (query) {
 
         // Filter results to only include ones matching other search paramters
         for (let i = 0; i < result["results"].length; i++) {
-            if (query.operator != undefined && result["results"][i]["opcode"] != opcode) {
+            if (query.operator != undefined && query.operator != "" &&
+            result["results"][i]["opcode"] != opcode) {
                 result["results"].splice(i,1);
                 i--;
-            } else if (query.depot != undefined && 
+            } else if (query.depot != undefined && query.depot != "" &&
             result["results"][i]["depot"].toLowerCase() != query.depot.toLowerCase()) {
                 result["results"].splice(i,1);
                 i--;
-            } else if (query.chassis != undefined && 
+            } else if (query.chassis != undefined && query.chassis != "" &&
             !result["results"][i].chassis.toLowerCase().includes(query.chassis.toLowerCase())) {
                 result["results"].splice(i,1);
                 i--;
-            } else if (query.body != undefined && 
+            } else if (query.body != undefined && query.body != "" &&
             !result["results"][i]["body"].toLowerCase().includes(query.body.toLowerCase())) {
                 result["results"].splice(i,1);
                 i--;
