@@ -21,16 +21,16 @@ function errorHandler(res, err) {
         res.status(403).type("text").send("403 Forbidden");
     } else if (err.message == "501") {
         res.status(501).type("text").send("501 Not Implemented");
-    } else if (err.message == "E00") {
-        res.status(400).type("text").send("E00 Invalid login");
-    } else if (err.message == "E01") {
-        res.status(400).type("text").send("E01 Email is invalid or already in use");
-    } else if (err.message == "E02") {
-        res.status(400).type("text").send("E02 Username is invalid or already in use");
-    } else if (err.message == "E03") {
-        res.status(400).type("text").send("E03 Passwords do not match");
-    } else if (err.message == "E04") {
-        res.status(400).type("text").send("E04 Password is too weak");
+    } else if (err.message == "invalidLogin") {
+        res.status(400).type("text").send("Invalid login");
+    } else if (err.message == "badEmail") {
+        res.status(400).type("text").send("Email is invalid or already in use");
+    } else if (err.message == "badUname") {
+        res.status(400).type("text").send("Username is invalid or already in use");
+    } else if (err.message == "passNotMatch") {
+        res.status(400).type("text").send("Passwords do not match");
+    } else if (err.message == "badPass") {
+        res.status(400).type("text").send("Password is too weak");
     } else {
         res.status(500).type("text").send(`500 Internal Server Error\n\n${err}`);
         console.error(err);
@@ -255,9 +255,7 @@ if (mode.site) {
 }
 
 // Catches unhandled routes - send HTTP 404
-APP.use(function (req, res) {
-    res.status(404).type("text").send("404 Not Found");
-})
+APP.use(function (req, res) {res.status(404).type("text").send("404 Not Found")});
 
 // Run server with port given in command line arguments
 APP.listen(Math.floor(Number(process.argv[3])));

@@ -12,9 +12,7 @@ const jwt = require("jsonwebtoken");
 const USERDATA_PATH = path.join(__dirname,"/data/user-data.json");
 
 // Returns UTC timestamps without milliseconds
-function time () {
-    return Math.floor(Date.now() / 1000);
-}
+function time () {return Math.floor(Date.now() / 1000)}
 
 // Create and sigh login token with givne uname and current time as timestamp
 function newToken (uname) {
@@ -35,15 +33,11 @@ function hasher (pass) {
 
 // Function to verify login tokens
 function tokenCheck (token) {
-    if (token == undefined) {
-        throw Error("400");
-    }
+    if (token == undefined) {throw Error("400")}
     
     const USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
     let tokenData;
-    let result = {
-        valid: false,
-    }
+    let result = {valid:false}
     
     // Attempt to verify and decode token, return logged out result if it fails.
     try {
@@ -76,12 +70,10 @@ function tokenCheck (token) {
 
 // Given a correct username and password, generate a new login token for the user.
 function login (uname, pass) {
-    if (uname == undefined || pass == undefined) {
-        throw Error("400");
-    }
+    if (uname == undefined || pass == undefined) {throw Error("400")}
     
     const USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
-    let accountUname, token;
+    let accountUname;
     let valid = false;
     let hashedPass = hasher(pass);
 
@@ -98,7 +90,7 @@ function login (uname, pass) {
     if (valid) {
         return {token:newToken(accountUname)}
     } else {
-        throw Error("E00");
+        throw Error("invalidLogin")
     }
     
 }
@@ -106,20 +98,14 @@ function login (uname, pass) {
 // Invalidate all existing login tokens for a user
 function logoutAll (token) {
     // Verify login token
-    if (token == undefined) {
-        throw Error("400");
-    }
+    if (token == undefined) {throw Error("400")}
     tokenInfo = tokenCheck(token);
-    if (!tokenInfo.valid) {
-        throw Error("403");
-    }
+    if (!tokenInfo.valid) {throw Error("403")}
 
     // Advance user's earliest login time to current time
     let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
     USERS.users.forEach(function (user) {
-        if (user.uname == tokenInfo.uname) {
-            user.earliestLogin = time();
-        }
+        if (user.uname == tokenInfo.uname) {user.earliestLogin = time()}
     });
     
     // Write data and return
@@ -135,28 +121,22 @@ function registerUser (email, uname, passOne, passTwo) {
 
     // Verify email against regex
     const emailRegex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-    if (!emailRegex.test(email)) {
-        throw Error("E01");
-    }
+    if (!emailRegex.test(email)) {throw Error("badEmail")}
     
     let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
     
     // Check if email or username has already been used
     USERS.users.forEach(function (user) {
         if (user.email == email) {
-            throw Error("E01");
+            throw Error("badEmail")
         } else if (user.uname == uname) {
-            throw Error("E02");
+            throw Error("badUname")
         }
     });
 
     // Verify passowrds match, and password is not weak
-    if (passOne != passTwo) {
-        throw new Error("E03");
-    }
-    if (passOne.length < 6) {
-        throw new Error("E04");
-    }
+    if (passOne != passTwo) {throw new Error("passNotMatch")}
+    if (passOne.length < 6) {throw new Error("badPass")}
 
     // Hash password
     let hashedPass = hasher(passOne);
@@ -185,9 +165,7 @@ function changeUserInfo (token, email, uname, pass) {
         throw Error("400");
     }
     tokenInfo = tokenCheck(token);
-    if (!tokenInfo.valid) {
-        throw Error("403");
-    }
+    if (!tokenInfo.valid) {throw Error("403")}
     
     // Temporarily store existing data
     let oldUserInfo;
@@ -201,30 +179,22 @@ function changeUserInfo (token, email, uname, pass) {
     // Validate email if a new one is provided
     if (email != oldUserInfo.email) {
         const emailRegex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-        if (!emailRegex.test(email)) {
-            throw Error("E01");
-        }
+        if (!emailRegex.test(email)) {throw Error("badEmail")}
         USERS.users.forEach(function (user) {
-            if (user.email == email) {
-                throw Error("E01");
-            }
+            if (user.email == email) {throw Error("badEmail")}
         });
     }
 
     // Validate username if a new one is given
     if (uname != oldUserInfo.uname) {
         USERS.users.forEach(function (user) {
-            if (user.uname == uname) {
-                throw Error("E02");
-            }
+            if (user.uname == uname) {throw Error("badUname")}
         });
     }
 
     // Ensore password given is correct, this check should be done last
     hashedPass = hasher(pass);
-    if (hashedPass != oldUserInfo.pass) {
-        throw Error("E00");
-    }
+    if (hashedPass != oldUserInfo.pass) {throw Error("invalidLogin")}
 
     // Write data, invalidate existing login tokens
     USERS.users.forEach(function (user) {
@@ -250,8 +220,8 @@ function changeUserPass (token, pass, passOne, passTwo) {
     if (!tokenInfo.valid) {throw Error("403")}
 
     // Check that new passwords match, and new password is not weak
-    if (passOne != passTwo) {throw Error("E03")}
-    if (passOne.length < 6) {throw Error("E04")}
+    if (passOne != passTwo) {throw Error("passNotMatch")}
+    if (passOne.length < 6) {throw Error("badPass")}
 
     // Ensure existing password given is correct, this check should be done last.
     // If password is correct, write new password and invalid existing login tokens.
@@ -263,7 +233,7 @@ function changeUserPass (token, pass, passOne, passTwo) {
                 user.pass = hasher(passOne);
                 user.earliestLogin = time();
             } else {
-                throw Error("E00");
+                throw Error("invalidLogin")
             }
         }
     });
