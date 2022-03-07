@@ -78,6 +78,7 @@ if (mode.api) {
     const SERACH = require("./api/search.js");
     const LOGIN = require("./api/login.js");
     const FAVOURITES = require("./api/favourites.js");
+    const SIGHTINGS = require("./api/sightings.js");
     
     APP.get("/api/tokencheck", function(req, res) {
         try {
@@ -217,6 +218,14 @@ if (mode.api) {
             errorHandler(res, err);
         }
     });
+    APP.post("/api/postsighting", function (req, res) {
+        try {
+            let result = SIGHTINGS.postSighting(req.body.token, req.body.plate_fleetnum, req.body.route, req.body.description);
+            res.json(result);
+        } catch (err) {
+            errorHandler(res, err);
+        }
+    })
 }
 
 // Website server routes
