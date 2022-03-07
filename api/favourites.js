@@ -14,9 +14,9 @@ const SEARCH = require(path.join(__dirname,"search.js"));
 
 function getFavourite (token) {
     // Verify request and login token
-    if (token == undefined) {throw Error("400")}
+    if (token == undefined) {throw Error("missingFields")}
     tokenInfo = LOGIN.tokenCheck(token);
-    if (!tokenInfo.valid) {throw Error("403")}
+    if (!tokenInfo.valid) {throw Error("badToken")}
 
     const BUSES = JSON.parse(fs.readFileSync(BUSDATA_PATH));
     const USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
@@ -41,9 +41,9 @@ function getFavourite (token) {
 
 function putFavourite (token, favourite) {
     // Verify request and login token
-    if (token == undefined || favourite == undefined) {throw Error("400")}
+    if (token == undefined || favourite == undefined) {throw Error("missingFields")}
     tokenInfo = LOGIN.tokenCheck(token);
-    if (!tokenInfo.valid) {throw Error("403");}
+    if (!tokenInfo.valid) {throw Error("badToken")}
 
     const BUSES = JSON.parse(fs.readFileSync(BUSDATA_PATH));
     let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
@@ -53,34 +53,31 @@ function putFavourite (token, favourite) {
     BUSES.buses.forEach(function (bus) {
         if (bus.plate == favourite) {busExists = true}
     });
-    if (!busExists) {throw Error("400")}
+    if (!busExists) {throw Error("badBus")}
 
     // Add favourite to user's list if not added before.
     USERS.users.forEach(function (user) {
-        if (user.favourites.includes(favourite)) {
-            throw Error("400");
-        } else {
+        if (!user.favourites.includes(favourite)) {
             user.favourites.push(favourite);
+            
+            // Write data and return
+            fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
+            return;
         }
     });
     
-    // Write data and return
-    fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
-    return;
+    
 }
 
 function deleteFavourite (token, favourite) {
     // Verify request and login token
-    if (token == undefined || favourite == undefined) {throw Error("400")}
+    if (token == undefined || favourite == undefined) {throw Error("missingFields")}
     tokenInfo = LOGIN.tokenCheck(token);
-    if (!tokenInfo.valid) {throw Error("403")}
+    if (!tokenInfo.valid) {throw Error("badToken")}
 
     let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
     USERS.users.forEach(function (user) {
         if (user.uname == tokenInfo.uname) {
-            // Check if favourite exists in user's list
-            if (!user.favourites.includes(favourite)) {throw Error("400")}
-            
             // Locate and remove favourite from list
             let removeIndex = user.favourites.indexOf(favourite);
             user.favourites.splice(removeIndex,1);
@@ -88,7 +85,6 @@ function deleteFavourite (token, favourite) {
 
         // Write data and return
         fs.writeFileSync(USERDATA_PATH,JSON.stringify(USERS));
-        return;
     });
 }
 

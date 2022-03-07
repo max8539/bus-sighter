@@ -13,14 +13,14 @@ function postSighting (token, plate_fleetnum, route, description) {
     // Verify request and login token
     if (token == undefined || plate_fleetnum == undefined 
     || route == undefined || description == undefined) {
-        throw Error("400");
+        throw Error("missingFields");
     }
     let tokenInfo = LOGIN.tokenCheck(token);
-    if (!tokenInfo.valid) {throw Error("403")}
+    if (!tokenInfo.valid) {throw Error("badToken")}
 
     // Verify that a description is given if this is required
     if (SETTINGS.requireDescription) {
-        if (description == "") {throw Error("400")}
+        if (description == "") {throw Error("missingDescription")}
     }
 
     // Count number of buses with a matching plate or fleetnum,
@@ -33,7 +33,7 @@ function postSighting (token, plate_fleetnum, route, description) {
             matchingBuses.push(bus);
         }
     })
-    if (matchingBuses.length == 0) {throw Error("400")}
+    if (matchingBuses.length == 0) {throw Error("badBus")}
 
     // Validate and record sighting if only one bus found,
     // else generate options if more than one bus found
@@ -42,7 +42,7 @@ function postSighting (token, plate_fleetnum, route, description) {
         if (SETTINGS.verifyOperatorRoutes) {
             OPERATORS.operators.forEach(function (operator) {
                 if (operator.opcode == matchingBuses[0].opcode) {
-                    if (!operator.routes.includes(route)) {throw Error("400")}
+                    if (!operator.routes.includes(route)) {throw Error("badRoute")}
                 }
             })
         }

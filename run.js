@@ -21,6 +21,10 @@ function errorHandler(res, err) {
         res.status(403).type("text").send("403 Forbidden");
     } else if (err.message == "501") {
         res.status(501).type("text").send("501 Not Implemented");
+    } else if (err.message == "missingFields") {
+        res.status(400).type("text").send("Missing request fields");
+    } else if (err.message == "badToken") {
+        res.status(403).type("text").send("Login token is invalid or not provided");
     } else if (err.message == "invalidLogin") {
         res.status(400).type("text").send("Invalid login");
     } else if (err.message == "badEmail") {
@@ -31,6 +35,12 @@ function errorHandler(res, err) {
         res.status(400).type("text").send("Passwords do not match");
     } else if (err.message == "badPass") {
         res.status(400).type("text").send("Password is too weak");
+    } else if (err.message == "badBus") {
+        res.status(400).type("text").send("Bus not found")
+    } else if (err.message == "badRoute") {
+        res.status(400).type("text").send("Invalid route for this bus")
+    } else if (err.message == "missingDescription") {
+        res.status(400).type("text").send("A description is required")
     } else {
         res.status(500).type("text").send(`500 Internal Server Error\n\n${err}`);
         console.error(err);

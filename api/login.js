@@ -33,7 +33,7 @@ function hasher (pass) {
 
 // Function to verify login tokens
 function tokenCheck (token) {
-    if (token == undefined) {throw Error("400")}
+    if (token == undefined) {throw Error("missingFields")}
     
     const USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
     let tokenData;
@@ -70,7 +70,7 @@ function tokenCheck (token) {
 
 // Given a correct username and password, generate a new login token for the user.
 function login (uname, pass) {
-    if (uname == undefined || pass == undefined) {throw Error("400")}
+    if (uname == undefined || pass == undefined) {throw Error("missingFields")}
     
     const USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
     let accountUname;
@@ -98,9 +98,9 @@ function login (uname, pass) {
 // Invalidate all existing login tokens for a user
 function logoutAll (token) {
     // Verify login token
-    if (token == undefined) {throw Error("400")}
+    if (token == undefined) {throw Error("missingFields")}
     tokenInfo = tokenCheck(token);
-    if (!tokenInfo.valid) {throw Error("403")}
+    if (!tokenInfo.valid) {throw Error("badToken")}
 
     // Advance user's earliest login time to current time
     let USERS = JSON.parse(fs.readFileSync(USERDATA_PATH));
@@ -116,7 +116,7 @@ function logoutAll (token) {
 function registerUser (email, uname, passOne, passTwo) {
     if (email == undefined || uname == undefined || 
     passOne == undefined || passTwo == undefined) {
-        throw Error("400");
+        throw Error("missingFields");
     }
 
     // Verify email against regex
@@ -162,10 +162,10 @@ function changeUserInfo (token, email, uname, pass) {
     // Validate request and token
     if (token == undefined || email == undefined ||
     uname == undefined || pass == undefined) {
-        throw Error("400");
+        throw Error("missingFields");
     }
     tokenInfo = tokenCheck(token);
-    if (!tokenInfo.valid) {throw Error("403")}
+    if (!tokenInfo.valid) {throw Error("badToken")}
     
     // Temporarily store existing data
     let oldUserInfo;
@@ -214,10 +214,10 @@ function changeUserPass (token, pass, passOne, passTwo) {
     // Validate request and token
     if (token == undefined || pass == undefined ||
     passOne == undefined || passTwo == undefined) {
-        throw Error("400");
+        throw Error("missingFields");
     }
     tokenInfo = tokenCheck(token);
-    if (!tokenInfo.valid) {throw Error("403")}
+    if (!tokenInfo.valid) {throw Error("badToken")}
 
     // Check that new passwords match, and new password is not weak
     if (passOne != passTwo) {throw Error("passNotMatch")}
@@ -245,8 +245,9 @@ function changeUserPass (token, pass, passOne, passTwo) {
 }
 
 function deleteUser (token, pass) {
+    if (token == undefined || pass == undefined) {throw Error("missingFields")}
     tokenInfo = tokenCheck(token);
-    if (!tokenInfo.valid) {throw Error("403")}
+    if (!tokenInfo.valid) {throw Error("badToken")}
 }
 
 module.exports = {tokenCheck,hasher,login,logoutAll,newToken,registerUser,changeUserInfo,changeUserPass,deleteUser}

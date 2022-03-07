@@ -50,7 +50,7 @@ function search (query) {
         })
     }
 
-    if (!valid) {throw Error("400")}
+    if (!valid) {throw Error("missingFields")}
 
     const SIGHTINGS = JSON.parse(fs.readFileSync(path.join(__dirname,"/data/sighting-data.json")));
 
