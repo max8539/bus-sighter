@@ -1,3 +1,9 @@
+// bus-sighter
+// a project by a bus spotter based in Sydney, Australia
+// https://github.com/max8539/bus-sighter
+
+// sightings.js - Scripts that handle posting and retrieving of sightings
+
 const fs = require("fs");
 const path = require("path");
 
